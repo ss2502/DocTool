@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +9,9 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-
         h1 {
             text-align: center;
         }
-
         #logo {
             max-width: 150px;
             background-image: url('Logo.png');
@@ -22,24 +19,20 @@
             height: 100px;
             margin-bottom: 20px;
         }
-
         .options {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
         }
-
         .checklist {
             display: none;
             margin-top: 20px;
         }
-
         textarea {
             width: 100%;
             height: 200px;
             margin-top: 10px;
         }
-
         .actionBtn {
             background-color: #4CAF50;
             color: white;
@@ -50,60 +43,58 @@
         }
     </style>
 </head>
-
 <body>
     <div id="logo">
         <img src="Logo.png" alt="Logo">
     </div>
-
     <h1>Order Processor Doc Tool</h1>
-
     <div class="options">
         <button class="actionBtn" onclick="toggleChecklist('detailChecklist')">Attention to Detail</button>
         <button class="actionBtn" onclick="toggleChecklist('emailChecklist')">Email to Printer</button>
         <button class="actionBtn" onclick="toggleChecklist('customChecklist')">Custom Orders</button>
+        <div>
+            <label for="shipDataSelection">Ship date/Due date revised:</label>
+            <select id="shipDataSelection" onchange="enableGenerateBtn()">
+                <option value="" selected disabled>Select option</option>
+                <option value="Yes">Yes</option>
+                <option value="NA">NA</option>
+            </select>
+        </div>
     </div>
-
     <div id="orderNo">
         <label for="orderNumber">Order No:</label>
         <input type="text" id="orderNumber">
         <button id="enterOrderBtn" onclick="enterOrderNumber()">Enter Order Number</button>
     </div>
-
     <button id="timestampBtn" onclick="generateTimestamp()">Generate Timestamp</button>
-    <button id="generateBtn" onclick="generateOutput()">Generate</button>
-
+    <button id="generateBtn" onclick="updateOutput()" disabled>Generate</button>
     <div id="detailChecklist" class="checklist">
         <p>Attention to Detail Checklist:</p>
         <ul>
-            <li><input type="checkbox" id="ladiesFitCheck"> Ladies fit check</li>
-            <li><input type="checkbox" id="screenPrintingBreakpoint"> Met screen printing breakpoint</li>
-            <li><input type="checkbox" id="orderedBreakdownMatch"> The ordered breakdown matches the order page</li>
+            <li><input type="checkbox" id="ladiesFitCheck"><label for="ladiesFitCheck">Ladies fit check</label></li>
+            <li><input type="checkbox" id="screenPrintingBreakpoint"><label for="screenPrintingBreakpoint">Met screen printing breakpoint</label></li>
+            <li><input type="checkbox" id="orderedBreakdownMatch"><label for="orderedBreakdownMatch">The ordered breakdown matches the order page</label></li>
         </ul>
     </div>
-
     <div id="emailChecklist" class="checklist">
         <p>Email to Printer Checklist:</p>
         <ul>
-            <li><input type="checkbox" id="informPrinterSameDifferentDesigns"> Informed the printer about items using the same/different designs</li>
-            <li><input type="checkbox" id="informPrinterUpdateDashboard"> Informed the printer and updated the order dashboard for HDD</li>
-            <li><input type="checkbox" id="reprintReorder"> Reprint/Reorder sent to the same printer with all the required details</li>
-            <li><input type="checkbox" id="informMandatoryTestPrint"> Informed about the mandatory test print and ship type changed to courier when needed</li>
+            <li><input type="checkbox" id="informPrinterSameDifferentDesigns"><label for="informPrinterSameDifferentDesigns">Informed the printer about items using the same/different designs</label></li>
+            <li><input type="checkbox" id="informPrinterUpdateDashboard"><label for="informPrinterUpdateDashboard">Informed the printer and updated the order dashboard for HDD</label></li>
+            <li><input type="checkbox" id="reprintReorder"><label for="reprintReorder">Reprint/Reorder sent to the same printer with all the required details</label></li>
+            <li><input type="checkbox" id="informMandatoryTestPrint"><label for="informMandatoryTestPrint">Informed about the mandatory test print and ship type changed to courier when needed</label></li>
         </ul>
     </div>
-
     <div id="customChecklist" class="checklist">
         <p>Custom Orders Checklist:</p>
         <ul>
-            <li><input type="checkbox" id="uploadCustomFiles"> Uploaded accurate & spell-checked custom files on the dashboard</li>
-            <li><input type="checkbox" id="confirmCaseSensitivity"> Case sensitivity or number of digits confirmed with the client</li>
-            <li><input type="checkbox" id="customFileBreakdownMatch"> Custom file breakdown matches the breakdown on the dashboard</li>
-            <li><input type="checkbox" id="arrangeCustomNames"> Custom names are arranged as per size and the CSV file is converted to PDF before sending to the printer</li>
+            <li><input type="checkbox" id="uploadCustomFiles"><label for="uploadCustomFiles">Uploaded accurate & spell-checked custom files on the dashboard</label></li>
+            <li><input type="checkbox" id="confirmCaseSensitivity"><label for="confirmCaseSensitivity">Case sensitivity or number of digits confirmed with the client</label></li>
+            <li><input type="checkbox" id="customFileBreakdownMatch"><label for="customFileBreakdownMatch">Custom file breakdown matches the breakdown on the dashboard</label></li>
+            <li><input type="checkbox" id="arrangeCustomNames"><label for="arrangeCustomNames">Custom names are arranged as per size and the CSV file is converted to PDF before sending to the printer</label></li>
         </ul>
     </div>
-
-    <textarea id="output" oninput="enableGenerateBtn()"></textarea>
-
+    <textarea id="output"></textarea>
     <script>
         function generateTimestamp() {
             var timestamp = new Date().toLocaleString();
@@ -122,67 +113,40 @@
             checklist.style.display = checklist.style.display === 'none' ? 'block' : 'none';
         }
 
+        function enableGenerateBtn() {
+            var shipDataOption = document.getElementById("shipDataSelection").value;
+            document.getElementById("generateBtn").disabled = !shipDataOption;
+        }
+
         function updateOutput() {
-            // Update output based on the selected checkboxes
-            var outputText = "";
+            var shipDataOption = document.getElementById("shipDataSelection").value;
+            if (!shipDataOption) {
+                alert("Please select an option from 'Ship data / Due date revised' before generating documentation.");
+                return;
+            }
+            var outputText = "Ship Data/Due Date Revised: " + shipDataOption + "\n";
             var orderNumber = document.getElementById("orderNumber").value;
 
             if (orderNumber.trim() !== "") {
                 outputText += "Order Number: " + orderNumber + "\n";
             }
 
-            if (document.getElementById("ladiesFitCheck").checked ||
-                document.getElementById("screenPrintingBreakpoint").checked ||
-                document.getElementById("orderedBreakdownMatch").checked) {
-                outputText += "Attention to Detail\n";
-                outputText += getCheckboxValue("ladiesFitCheck", "Ladies fit check");
-                outputText += getCheckboxValue("screenPrintingBreakpoint", "Met screen printing breakpoint");
-                outputText += getCheckboxValue("orderedBreakdownMatch", "The ordered breakdown matches the order page");
-            }
-
-            if (document.getElementById("informPrinterSameDifferentDesigns").checked ||
-                document.getElementById("informPrinterUpdateDashboard").checked ||
-                document.getElementById("reprintReorder").checked ||
-                document.getElementById("informMandatoryTestPrint").checked) {
-                outputText += "Email to Printer\n";
-                outputText += getCheckboxValue("informPrinterSameDifferentDesigns", "Informed the printer about items using the same/different designs");
-                outputText += getCheckboxValue("informPrinterUpdateDashboard", "Informed the printer and updated the order dashboard for HDD");
-                outputText += getCheckboxValue("reprintReorder", "Reprint/Reorder sent to the same printer with all the required details");
-                outputText += getCheckboxValue("informMandatoryTestPrint", "Informed about the mandatory test print and ship type changed to courier when needed");
-            }
-
-            if (document.getElementById("uploadCustomFiles").checked ||
-                document.getElementById("confirmCaseSensitivity").checked ||
-                document.getElementById("customFileBreakdownMatch").checked ||
-                document.getElementById("arrangeCustomNames").checked) {
-                outputText += "Custom Orders\n";
-                outputText += getCheckboxValue("uploadCustomFiles", "Uploaded accurate & spell-checked custom files on the dashboard");
-                outputText += getCheckboxValue("confirmCaseSensitivity", "Case sensitivity or number of digits confirmed with the client");
-                outputText += getCheckboxValue("customFileBreakdownMatch", "Custom file breakdown matches the breakdown on the dashboard");
-                outputText += getCheckboxValue("arrangeCustomNames", "Custom names are arranged as per size and the CSV file is converted to PDF before sending to the printer");
-            }
+            var checklists = ["detailChecklist", "emailChecklist", "customChecklist"];
+            checklists.forEach(function(checklist) {
+                var items = document.getElementById(checklist).getElementsByTagName('input');
+                var listOutput = "";
+                Array.from(items).forEach(function(item) {
+                    if (item.checked) {
+                        listOutput += "• " + document.querySelector('label[for="' + item.id + '"]').innerText + "\n";
+                    }
+                });
+                if (listOutput) {
+                    outputText += document.getElementById(checklist).firstElementChild.innerText + ":\n" + listOutput;
+                }
+            });
 
             document.getElementById("output").value = outputText;
         }
-
-        function getCheckboxValue(checkboxId, text) {
-            return document.getElementById(checkboxId).checked ? "• " + text + "\n" : "";
-        }
-
-        function generateOutput() {
-            // Generate output for all selected items
-            updateOutput();
-            // Hide all checklists
-            var checklists = document.querySelectorAll('.checklist');
-            checklists.forEach(function (checklist) {
-                checklist.style.display = 'none';
-            });
-        }
-
-        function enableGenerateBtn() {
-            document.getElementById("generateBtn").disabled = false;
-        }
     </script>
 </body>
-
 </html>
